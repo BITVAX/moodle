@@ -17,21 +17,21 @@
 /**
  * Condition main class.
  *
- * @package availability_language
- * @copyright 2018 Renaat Debleu <info@eWallah.net>
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   availability_language
+ * @copyright 2022 eWallah.net
+ * @author    Renaat Debleu <info@eWallah.net>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace availability_language;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Condition main class.
  *
- * @package availability_language
- * @copyright 2018 Renaat Debleu <info@eWallah.net>
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   availability_language
+ * @copyright 2022 eWallah.net
+ * @author    Renaat Debleu <info@eWallah.net>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class condition extends \core_availability\condition {
 
@@ -139,15 +139,12 @@ class condition extends \core_availability\condition {
      * @return string Information string (for admin) about all restrictions on this item
      */
     public function get_description($full, $not, \core_availability\info $info) {
-        if ($this->languageid == '') {
-            return '';
-        }
-        $installedlangs = get_string_manager()->get_list_of_translations(false);
-        if (array_key_exists($this->languageid, $installedlangs)) {
-            if ($not) {
-                return get_string('getdescriptionnot', 'availability_language', $installedlangs[$this->languageid]);
+        if ($this->languageid != '') {
+            $installedlangs = get_string_manager()->get_list_of_translations(false);
+            if (array_key_exists($this->languageid, $installedlangs)) {
+                $snot = $not ? 'not' : '';
+                return get_string('getdescription' . $snot, 'availability_language', $installedlangs[$this->languageid]);
             }
-            return get_string('getdescription', 'availability_language', $installedlangs[$this->languageid]);
         }
         return '';
     }

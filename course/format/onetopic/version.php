@@ -18,15 +18,15 @@
  * Version details.
  *
  * @package format_onetopic
- * @copyright 2015 David Herney Bernal - cirano
+ * @copyright 2015 David Herney Bernal - cirano. https://bambuco.co
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2018010608;        // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2017050500;        // Requires this Moodle version.
-$plugin->component = 'format_onetopic';    // Full name of the plugin (used for diagnostics).
+$plugin->version = 2022081609; // The current plugin version (Date: YYYYMMDDXX).
+$plugin->requires = 2022041902; // Requires this Moodle version.
+$plugin->component = 'format_onetopic'; // Full name of the plugin (used for diagnostics).
 $plugin->maturity = MATURITY_STABLE;
-$plugin->release = 'san juan';
-$plugin->dependencies = array('format_topics' => 2017051500);
+$plugin->release = '4.1.05(PiedrasTeherán)';
+$plugin->dependencies = ['format_topics' => 2022041900];

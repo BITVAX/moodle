@@ -23,7 +23,6 @@
  */
 
 namespace mod_attendance\privacy;
-defined('MOODLE_INTERNAL') || die();
 
 use context;
 use context_module;
@@ -40,8 +39,7 @@ use stdClass;
 final class provider implements
     \core_privacy\local\request\plugin\provider,
     \core_privacy\local\request\core_userlist_provider,
-    \core_privacy\local\metadata\provider
-{
+    \core_privacy\local\metadata\provider {
 
     /**
      * Returns meta data about this system.
@@ -213,9 +211,10 @@ final class provider implements
             $sessionids = array_keys(
                 $DB->get_records('attendance_sessions', ['attendanceid' => $attendanceid])
             );
-
-            self::delete_user_from_session_attendance_log($userid, $sessionids);
-            self::delete_user_from_sessions($userid, $sessionids);
+            if (!empty($sessionids)) {
+                self::delete_user_from_session_attendance_log($userid, $sessionids);
+                self::delete_user_from_sessions($userid, $sessionids);
+            }
             self::delete_user_from_attendance_warnings_log($userid, $attendanceid);
         }
     }

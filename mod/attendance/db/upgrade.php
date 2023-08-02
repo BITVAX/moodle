@@ -32,10 +32,8 @@ require_once(dirname(__FILE__) . '/upgradelib.php');
  */
 function xmldb_attendance_upgrade($oldversion=0) {
 
-    global $DB;
+    global $DB, $CFG;
     $dbman = $DB->get_manager(); // Loads ddl manager and xmldb classes.
-
-    $result = true;
 
     if ($oldversion < 2014112000) {
         $table = new xmldb_table('attendance_sessions');
@@ -650,5 +648,163 @@ function xmldb_attendance_upgrade($oldversion=0) {
         upgrade_mod_savepoint(true, 2021050700, 'attendance');
     }
 
-    return $result;
+    if ($oldversion < 2021082400) {
+
+        // Changing precision of field statusset on table attendance_log to (1333).
+        $table = new xmldb_table('attendance_sessions');
+        $field = new xmldb_field('automarkcmid', XMLDB_TYPE_CHAR, '10', null, false, null, null, 'rotateqrcodesecret');
+
+        // Launch change of precision for field statusset.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Attendance savepoint reached.
+        upgrade_mod_savepoint(true, 2021082400, 'attendance');
+    }
+
+    if ($oldversion < 2021082401) {
+
+        // Changing the default of field automarkcmid on table attendance_sessions to 0.
+        $table = new xmldb_table('attendance_sessions');
+        $field = new xmldb_field('automarkcmid', XMLDB_TYPE_INTEGER, '10', null, null, null, '0', 'rotateqrcodesecret');
+
+        // Launch change of default for field automarkcmid.
+        $dbman->change_field_default($table, $field);
+
+        // Attendance savepoint reached.
+        upgrade_mod_savepoint(true, 2021082401, 'attendance');
+    }
+
+    if ($oldversion < 2021082402) {
+
+        // Changing the default of field ipaddress on table attendance_log to .
+        $table = new xmldb_table('attendance_log');
+        $field = new xmldb_field('ipaddress', XMLDB_TYPE_CHAR, '45', null, null, null, '', 'remarks');
+
+        // Launch change of default for field ipaddress.
+        $dbman->change_field_default($table, $field);
+
+        // Attendance savepoint reached.
+        upgrade_mod_savepoint(true, 2021082402, 'attendance');
+    }
+
+    if ($oldversion < 2021082600) {
+        // Check if auto-marking in use, and if so, set automark_useempty = 0 to prevent changes in existing behaviour.
+        if ($DB->record_exists_select('attendance_sessions', 'automark > 0')) {
+            set_config('automark_useempty', '0', 'attendance');
+        }
+
+        // Attendance savepoint reached.
+        upgrade_mod_savepoint(true, 2021082600, 'attendance');
+    }
+
+    if ($oldversion < 2022082900) {
+
+        // Changing precision of field remarks on table attendance_log to (1333).
+        $table = new xmldb_table('attendance_log');
+        $field = new xmldb_field('remarks', XMLDB_TYPE_CHAR, '1333', null, null, null, null, 'takenby');
+
+        // Launch change of precision for field remarks.
+        $dbman->change_field_precision($table, $field);
+
+        // Attendance savepoint reached.
+        upgrade_mod_savepoint(true, 2022082900, 'attendance');
+    }
+
+    if ($oldversion < 2022083100) {
+
+        // Define field studentsearlyopentime to be added to attendance_sessions.
+        $table = new xmldb_table('attendance_sessions');
+        $field = new xmldb_field('studentsearlyopentime', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL,
+                                 null, '0', 'studentscanmark');
+
+        // Conditionally launch add field studentsearlyopentime.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Attendance savepoint reached.
+        upgrade_mod_savepoint(true, 2022083100, 'attendance');
+    }
+    if ($oldversion < 2022090900) {
+        if (!empty($CFG->dbfamily) && $CFG->dbfamily == 'postgres') {
+            $sql = 'DELETE FROM {attendance_log}
+            WHERE id NOT IN (SELECT max(id)
+                               FROM {attendance_log}
+                           GROUP BY sessionid, studentid, statusid)';
+            $DB->execute($sql);
+        } else if (!empty($CFG->dbfamily) && $CFG->dbfamily == 'mysql') {
+            // There is probably a faster way to do this for mysql, but it works.
+            $sql = "SELECT id
+                      FROM {attendance_log}
+                      WHERE id NOT IN (SELECT max(id)
+                               FROM {attendance_log}
+                           GROUP BY sessionid, studentid, statusid)";
+            $records = $DB->get_records_sql($sql);
+            foreach ($records as $record) {
+                $DB->delete_records('attendance_log', ['id' => $record->id]);
+            }
+        } else if (!empty($CFG->dbfamily) && $CFG->dbfamily == 'mssql') {
+            $sql = "DELETE {attendance_log}
+                    WHERE id NOT IN (
+                        SELECT max(id)
+                        FROM {attendance_log}
+                        GROUP BY sessionid, studentid, statusid
+                        )";
+            $DB->execute($sql);
+        }
+        // Attendance savepoint reached.
+        upgrade_mod_savepoint(true, 2022090900, 'attendance');
+    }
+
+    if ($oldversion < 2023020100) {
+
+        // Define field studentavailability to be added to attendance_statuses.
+        $table = new xmldb_table('attendance_statuses');
+        $field = new xmldb_field('availablebeforesession', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'studentavailability');
+
+        // Conditionally launch add field studentavailability.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Attendance savepoint reached.
+        upgrade_mod_savepoint(true, 2023020100, 'attendance');
+    }
+
+    if ($oldversion < 2023020102) {
+
+        // Define field studentavailability to be added to attendance_statuses.
+        $table = new xmldb_table('attendance_sessions');
+        $field = new xmldb_field('allowupdatestatus', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'automarkcmid');
+
+        // Conditionally launch add field studentavailability.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Attendance savepoint reached.
+        upgrade_mod_savepoint(true, 2023020102, 'attendance');
+    }
+
+    if ($oldversion < 2023020106) {
+        // Update any records with null values and set to 0;
+        $sql = 'UPDATE {attendance_sessions} set allowupdatestatus = 0 WHERE allowupdatestatus is null';
+        $DB->execute($sql);
+
+        // Changing precision of field allowupdatestatus on table attendance_sessions to (1).
+        $table = new xmldb_table('attendance_sessions');
+        $field = new xmldb_field('allowupdatestatus', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'studentscanmark');
+
+        // Launch change of precision for field allowupdatestatus.
+        $dbman->change_field_precision($table, $field);
+        $dbman->change_field_default($table, $field);
+        $dbman->change_field_notnull($table, $field);
+
+        // Attendance savepoint reached.
+        upgrade_mod_savepoint(true, 2023020106, 'attendance');
+    }
+
+    return true;
 }
