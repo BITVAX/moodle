@@ -24,22 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-user_preference_allow_ajax_update('drawer-open-nav', PARAM_ALPHA);
-require_once($CFG->libdir . '/behat/lib.php');
-
-if (isloggedin()) {
-    $navdraweropen = (get_user_preferences('drawer-open-nav', 'true') == 'true');
-} else {
-    $navdraweropen = false;
-}
-$extraclasses = [];
-if ($navdraweropen) {
-    $extraclasses[] = 'drawer-open-left';
-}
-$bodyattributes = $OUTPUT->body_attributes($extraclasses);
-$blockshtml = $OUTPUT->blocks('side-pre');
-$hasblocks = strpos($blockshtml, 'data-block=') !== false;
-$regionmainsettingsmenu = $OUTPUT->region_main_settings_menu();
 
 // Header Content.
 $logourl = get_logo_url();
@@ -61,7 +45,7 @@ $gpurl = theme_academi_get_setting('gpurl');
 $address = theme_academi_get_setting('address');
 $emailid = theme_academi_get_setting('emailid');
 $phoneno = theme_academi_get_setting('phoneno');
-$copyrightfooter = theme_academi_get_setting('copyright_footer');
+$copyrightfooter = theme_academi_get_setting('copyright_footer', 'format_html');
 $infolink = theme_academi_get_setting('infolink');
 $infolink = theme_academi_infolink();
 
@@ -104,13 +88,6 @@ switch ($blockarrange) {
 $templatecontext = [
     'sitename' => format_string($SITE->shortname, true, ['context' => context_course::instance(SITEID), "escape" => false]),
     'output' => $OUTPUT,
-    'sidepreblocks' => $blockshtml,
-    'hasblocks' => $hasblocks,
-    'bodyattributes' => $bodyattributes,
-    'navdraweropen' => $navdraweropen,
-    'regionmainsettingsmenu' => $regionmainsettingsmenu,
-    'hasregionmainsettingsmenu' => !empty($regionmainsettingsmenu),
-
     "logourl" => $logourl,
     "footlogo" => $footlogo,
     "footnote" => $footnote,
@@ -130,7 +107,7 @@ $templatecontext = [
     "phone" => $phone,
     "email" => $email,
     "s_followus" => $sfollowus,
-    "url" => $url,
+    "socialurl" => $url,
     "infolink" => $infolink,
     "block3" => $block3,
     "footerblock" => $footerblock,
@@ -140,5 +117,5 @@ $templatecontext = [
 
 ];
 
-$templatecontext['flatnavigation'] = $PAGE->flatnav;
+
 echo $OUTPUT->render_from_template('theme_academi/footer', $templatecontext);

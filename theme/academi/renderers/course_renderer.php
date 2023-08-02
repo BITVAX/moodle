@@ -37,9 +37,9 @@ class theme_academi_core_course_renderer extends core_course_renderer {
     /**
      * Overrite the course  box.
      * @param coursecat_helper $chelper
-     * @param type|array $course
-     * @param type|string $additionalclasses
-     * @return type
+     * @param array $course
+     * @param string $additionalclasses
+     * @return void
      */
     protected function coursecat_coursebox(coursecat_helper $chelper, $course, $additionalclasses = '') {
         global $CFG;
@@ -50,11 +50,15 @@ class theme_academi_core_course_renderer extends core_course_renderer {
             return '';
         }
         if ($course instanceof stdClass) {
-            // require_once($CFG->libdir. '/coursecatlib.php');.
             $course = new core_course_list_element($course);
         }
+        if (empty($course->get_course_overviewfiles())) {
+            $class = " content-block";
+        } else {
+            $class = "";
+        }
         $content = '';
-        $classes = trim('coursebox clearfix '. $additionalclasses);
+        $classes = trim('coursebox clearfix '.$additionalclasses .$class);
         if ($chelper->get_show_courses() >= self::COURSECAT_SHOW_COURSES_EXPANDED) {
             $nametag = 'h3';
         } else {
@@ -101,12 +105,7 @@ class theme_academi_core_course_renderer extends core_course_renderer {
 
         $content .= html_writer::end_tag('div'); // Info.
 
-        if (empty($course->get_course_overviewfiles())) {
-            $class = "content-block";
-        } else {
-            $class = "";
-        }
-            $content .= html_writer::start_tag('div', array('class' => 'content '.$class));
+            $content .= html_writer::start_tag('div', array('class' => 'content '));
             $content .= $this->coursecat_coursebox_content($chelper, $course);
             $content .= html_writer::end_tag('div'); // Content.
         $content .= html_writer::end_tag('div'); // Coursebox.
