@@ -23,8 +23,6 @@
 
 namespace format_tiles;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Course section manager class for format tiles.
  * @package    format_tiles
@@ -38,7 +36,7 @@ class course_section_manager {
      * @param int $courseid
      */
     public static function resolve_section_misnumbering($courseid) {
-        global $DB;
+        global $DB, $CFG;
         // First check we don't have too many sections in the course.
         // We do not want to attempt a re-order if so, as may take too long.  (User must delete excess sections first).
         $maxsections = self::get_max_sections();
@@ -59,6 +57,7 @@ class course_section_manager {
 
         // Find if any section has a gap before it, and renumber course if one is found.
         if (count($sections) > 1) {
+            require_once($CFG->dirroot . '/course/lib.php'); // Require course lib for move_section_to() function.
             $previoussectionnumber = 0;
             foreach ($sections as $section) {
                 if ($section->section > $previoussectionnumber + 1) {
@@ -84,7 +83,7 @@ class course_section_manager {
 
     /**
      * Find all courses which have too many sections.
-     * @param $maxsections
+     * @param int $maxsections maximum number of course sections allowed.
      * @return array
      * @throws \dml_exception
      */
@@ -118,7 +117,7 @@ class course_section_manager {
 
     /**
      * Schedule a task to delete all empty sections in a course.
-     * @param $courseid
+     * @param int $courseid
      * @throws \coding_exception
      * @throws \dml_exception
      * @throws \moodle_exception
@@ -137,7 +136,7 @@ class course_section_manager {
 
     /**
      * Cancel a previously scheduled task to delete all empty sections in a given course.
-     * @param $courseid
+     * @param int $courseid
      */
     public static function cancel_empty_sec_deletion ($courseid) {
         unset_config('delete_empty_sections_' . $courseid, 'format_tiles');

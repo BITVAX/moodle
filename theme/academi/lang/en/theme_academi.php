@@ -69,8 +69,8 @@ $string['infoblocktitle'] = 'Info Block Title';
 $string['infoblocktitledefault'] = 'Who we are';
 $string['infoblocktitledesc'] = 'The title of the info block';
 $string['infolink'] = 'Info Links';
-$string['infolinkdefault'] = 'Moodle community|https://moodle.org
-Moodle free support|https://moodle.org/support
+$string['infolinkdefault'] = 'Moodle community|https://moodle.org Moodle free
+support|https://moodle.org/support
 Moodle development|https://moodle.org/development
 Moodle Docs|http://docs.moodle.org|Moodle Docs
 Moodle.com|http://moodle.com/';
@@ -81,7 +81,6 @@ Moodle development|https://moodle.org/development
 Moodle Docs|http://docs.moodle.org|Moodle Docs
 German Moodle Docs|http://docs.moodle.org/de|Documentation in German|de
 Moodle.com|http://moodle.com/ </pre>';
-
 $string['logo'] = 'Logo';
 $string['logodesc'] = 'Please upload your custom logo here if you want to add it to the header. <br>The image should be 37px high and any reasonable width (minimum:250px) that suits.';
 
@@ -200,3 +199,13 @@ Moodle community|https://moodle.org
 -###
 -Moodle development|https://moodle.org/development
 Moodle.com|http://moodle.com/";
+$string['privacy:metadata'] = 'The academi theme does not store any personal data about any user.';
+$string['primarycolor'] = 'Primary color';
+$string['primarycolor_desc'] = 'Select primary color for your brand ';
+$string['secondarycolor'] = 'Secondary color';
+$string['secondarycolor_desc'] = 'Select a color that will be used as secondary color through out moodle site';
+$string['themestyleheader'] = 'Header style';
+$string['themestyleheader_desc'] = 'Select the any of the style for your header, In moodle based style, Menus are displayed in the top header.
+<br>And the bottom header will be hidden. In theme based modal, Menus are displaying in the bottom header.';
+$string['themebased'] = 'Theme based';
+$string['moodlebased'] = 'Moodle based';

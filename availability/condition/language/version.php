@@ -17,15 +17,17 @@
 /**
  * Version info.
  *
- * @package availability_language
- * @copyright 2018 Renaat Debleu <info@eWallah.net>
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   availability_language
+ * @copyright 2022 eWallah.net
+ * @author    Renaat Debleu <info@eWallah.net>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2020112700;
-$plugin->requires  = 2019111800;
 $plugin->component = 'availability_language';
-$plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = '3.8+';
+$plugin->requires = 2021051700;
+$plugin->maturity = MATURITY_STABLE;
+$plugin->supported = [311, 402];
+$plugin->release = 'v4.0.1';
+$plugin->version = 2023042300;

@@ -26,7 +26,6 @@ define('NO_OUTPUT_BUFFERING', true);
 
 require_once(dirname(__FILE__).'/../../config.php');
 require_once(dirname(__FILE__).'/locallib.php');
-require_once(dirname(__FILE__).'/renderables.php');
 require_once(dirname(__FILE__).'/renderhelpers.php');
 require_once($CFG->libdir.'/formslib.php');
 
@@ -54,6 +53,9 @@ $formparams = array('course' => $course, 'cm' => $cm, 'modcontext' => $context);
 $mform = new mod_attendance\form\export($att->url_export(), $formparams);
 
 if ($formdata = $mform->get_data()) {
+    // Exporting large courses may use a bit of memory/take a bit of time.
+    \core_php_time_limit::raise();
+    raise_memory_limit(MEMORY_HUGE);
 
     $pageparams = new mod_attendance_page_with_filter_controls();
     $pageparams->init($cm);
@@ -77,7 +79,7 @@ if ($formdata = $mform->get_data()) {
     }
     $att->pageparams = $pageparams;
 
-    $reportdata = new attendance_report_data($att);
+    $reportdata = new mod_attendance\output\report_data($att);
     if ($reportdata->users) {
         $filename = clean_filename($course->shortname.'_'.
             get_string('modulenameplural', 'attendance').
@@ -212,10 +214,7 @@ if ($formdata = $mform->get_data()) {
 }
 
 $output = $PAGE->get_renderer('mod_attendance');
-$tabs = new attendance_tabs($att, attendance_tabs::TAB_EXPORT);
 echo $output->header();
-echo $output->heading(get_string('attendanceforthecourse', 'attendance').' :: ' .format_string($course->fullname));
-echo $output->render($tabs);
 
 $mform->display();
 

@@ -23,12 +23,25 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+/**
+ * Tiles filter bar course setting - show no filters.
+ */
+const FILTER_NONE = 0;
 
-define('FILTER_NONE', 0);
-define('FILTER_NUMBERS_ONLY', 1);
-define('FILTER_OUTCOMES_ONLY', 2);
-define('FILTER_OUTCOMES_AND_NUMBERS', 3);
+/**
+ * Tiles filter bar course setting - show tile number filter buttons only.
+ */
+const FILTER_NUMBERS_ONLY = 1;
+
+/**
+ * Tiles filter bar course setting - show outcome filter buttons only.
+ */
+const FILTER_OUTCOMES_ONLY = 2;
+
+/**
+ * Tiles filter bar course setting - show filter buttons for tile numbers and outcomes.
+ */
+const FILTER_OUTCOMES_AND_NUMBERS = 3;
 
 /**
  * Specialised restore for format_tiles
@@ -92,18 +105,21 @@ class restore_format_tiles_plugin extends restore_format_plugin {
      * @throws moodle_exception
      */
     private function fail_if_course_includes_excess_sections() {
+        $backupinfo = $this->step->get_task()->get_info();
+        if (!isset($backupinfo->original_course_format) || $backupinfo->original_course_format !== 'tiles') {
+            return;
+        }
         $maxallowed = \format_tiles\course_section_manager::get_max_sections();
 
         // Get the sections from the backup and check them one by one.
-        $backupinfo = $this->step->get_task()->get_info();
         $totalincluded = 0;
         foreach ($backupinfo->sections as $section) {
             // Is the section included or has the user excluded it (unchecked box)?  Ignore if excluded.
             $sectionid = $section->sectionid;
             $included = $this->get_setting_value('section_' . $sectionid . '_included');
             if ($included) {
-                $sectionnum = (int)$section->title;
-                if ($sectionnum > $maxallowed + 1) {
+                $sectionnum = is_numeric($section->title) ? (int)$section->title : false;
+                if (($sectionnum && $sectionnum > $maxallowed + 1) || $totalincluded > $maxallowed) {
                     // Allowing this section would mean we had some secs with sec numbers too high - disallow.
                     $a = new stdClass();
                     $a->sectionnum = $sectionnum;

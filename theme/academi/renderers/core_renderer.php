@@ -22,8 +22,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Academi core renderer renderer from the moodle core renderer
  * @copyright  2015 onwards LMSACE Dev Team (http://www.lmsace.com)
@@ -33,7 +31,7 @@ class theme_academi_core_renderer extends theme_boost\output\core_renderer {
     /**
      * Custom menu in header.
      * @param custom_menu $menu
-     * @return type
+     * @return string
      */
     public function custom_menu_render(custom_menu $menu) {
         global $CFG;
