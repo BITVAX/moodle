@@ -14,10 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Plugin version and other meta-data are defined here.
+ *
+ * @package block_dedication
+ * @copyright  Borja Rubio Reyes
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2020041000;
-$plugin->requires  = 2015111600;
 $plugin->component = 'block_dedication';
-$plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = 'Moodle 3.x+';
+$plugin->release = 2023070300;
+$plugin->version = 2023070300;
+$plugin->requires = 2022041904; // Requires 4.0.
+$plugin->maturity = MATURITY_STABLE;
+$plugin->supported = [400, 401];

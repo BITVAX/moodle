@@ -17,23 +17,28 @@
 /**
  * Unit tests for the language condition.
  *
- * @package availability_language
- * @copyright 2017 eWallah.net <info@eWallah.net>
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   availability_language
+ * @copyright 2022 eWallah.net
+ * @author    Renaat Debleu <info@eWallah.net>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace availability_language;
 
-defined('MOODLE_INTERNAL') || die();
-
+use \core_availability\mock_info;
+use \core_availability\tree;
 use availability_language\condition;
+use moodle_exception;
 
 /**
  * Unit tests for the language condition.
  *
- * @package availability_language
- * @copyright 2017 eWallah.net <info@eWallah.net>
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   availability_language
+ * @copyright 2022 eWallah.net
+ * @author    Renaat Debleu <info@eWallah.net>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @coversDefaultClass \availability_language
  */
-class availability_language_condition_testcase extends advanced_testcase {
+class condition_test extends \advanced_testcase {
 
     /**
      * Load required classes.
@@ -46,7 +51,7 @@ class availability_language_condition_testcase extends advanced_testcase {
 
     /**
      * Tests constructing and using language condition as part of tree.
-     * @coversDefaultClass availability_language\condition
+     * @covers \availability_language\condition
      */
     public function test_in_tree() {
         global $DB;
@@ -61,8 +66,8 @@ class availability_language_condition_testcase extends advanced_testcase {
         $DB->set_field('user', 'lang', 'nl', ['id' => $user1]);
         $user2 = $generator->create_user()->id;
 
-        $info1 = new \core_availability\mock_info($course, $user1);
-        $info2 = new \core_availability\mock_info($course, $user2);
+        $info1 = new mock_info($course, $user1);
+        $info2 = new mock_info($course, $user2);
 
         $arr1 = ['type' => 'language', 'id' => 'en'];
         $arr2 = ['type' => 'language', 'id' => 'nl'];
@@ -95,7 +100,7 @@ class availability_language_condition_testcase extends advanced_testcase {
 
     /**
      * Tests section availability.
-     * @covers availability_language\condition
+     * @covers \availability_language\condition
      */
     public function test_sections() {
         global $DB;
@@ -132,7 +137,7 @@ class availability_language_condition_testcase extends advanced_testcase {
 
     /**
      * Tests the constructor including error conditions.
-     * @covers availability_language\condition
+     * @covers \availability_language\condition
      */
     public function test_constructor() {
         // This works with no parameters.
@@ -150,15 +155,13 @@ class availability_language_condition_testcase extends advanced_testcase {
         $structure->id = null;
         try {
             $language = new condition($structure);
-            $this->fail();
-        } catch (coding_exception $e) {
+        } catch (\coding_exception $e) {
             $this->assertStringContainsString('Invalid ->id for language condition', $e->getMessage());
         }
         $structure->id = 12;
         try {
             $language = new condition($structure);
-            $this->fail();
-        } catch (coding_exception $e) {
+        } catch (\coding_exception $e) {
             $this->assertStringContainsString('Invalid ->id for language condition', $e->getMessage());
         }
         $this->assertEquals(null, $language);
@@ -166,7 +169,7 @@ class availability_language_condition_testcase extends advanced_testcase {
 
     /**
      * Tests the save() function.
-     * @covers availability_language\condition
+     * @covers \availability_language\condition
      */
     public function test_save() {
         $structure = (object)['id' => 'fr'];
@@ -178,10 +181,10 @@ class availability_language_condition_testcase extends advanced_testcase {
 
     /**
      * Tests the get_description and get_standalone_description functions.
-     * @covers availability_language\condition
+     * @covers \availability_language\condition
      */
     public function test_get_description() {
-        $info = new \core_availability\mock_info();
+        $info = new mock_info();
         $language = new condition((object)['type' => 'language', 'id' => '']);
         $this->assertEquals($language->get_description(false, false, $info), '');
         $language = new condition((object)['type' => 'language', 'id' => 'en']);
@@ -191,13 +194,13 @@ class availability_language_condition_testcase extends advanced_testcase {
         $this->assertEquals('The student\'s language is not English ‎(en)‎', $desc);
         $desc = $language->get_standalone_description(true, false, $info);
         $this->assertStringContainsString('Not available unless: The student\'s language is English', $desc);
-        $result = phpunit_util::call_internal_method($language, 'get_debug_string', [], 'availability_language\condition');
+        $result = \phpunit_util::call_internal_method($language, 'get_debug_string', [], 'availability_language\condition');
         $this->assertEquals('en', $result);
     }
 
     /**
      * Tests using language condition in front end.
-     * @coversDefaultClass availability_language\frontend
+     * @covers \availability_language\frontend
      */
     public function test_frontend() {
         global $CFG;
@@ -207,10 +210,14 @@ class availability_language_condition_testcase extends advanced_testcase {
         set_config('enableavailability', true);
         $generator = $this->getDataGenerator();
         $course = $generator->create_course();
-        $les = new lesson($generator->get_plugin_generator('mod_lesson')->create_instance(['course' => $course, 'section' => 0]));
+        $params = ['course' => $course, 'section' => 0];
+        $les = new \lesson($generator->get_plugin_generator('mod_lesson')->create_instance($params));
+        $params['lang'] = 'nl';
+        $page = $generator->get_plugin_generator('mod_page')->create_instance($params);
         $user = $generator->create_user();
         $modinfo = get_fast_modinfo($course);
-        $cm = $modinfo->get_cm($les->cmid);
+        $cm1 = $modinfo->get_cm($les->cmid);
+        $cm2 = $modinfo->get_cm($page->cmid);
         $sections = $modinfo->get_section_info_all();
         $generator->enrol_user($user->id, $course->id);
 
@@ -218,35 +225,42 @@ class availability_language_condition_testcase extends advanced_testcase {
         $frontend = new \availability_language\frontend();
         // There is only 1 language installed, so we cannot assert allow add will return true.
         $this->assertCount(1, get_string_manager()->get_list_of_translations(true));
-        $this->assertCount(1, phpunit_util::call_internal_method($frontend, 'get_javascript_init_params', [$course], $name));
-        $this->assertFalse(phpunit_util::call_internal_method($frontend, 'allow_add', [$course], $name));
-        $this->assertFalse(phpunit_util::call_internal_method($frontend, 'allow_add', [$course, $cm, null], $name));
-        $this->assertFalse(phpunit_util::call_internal_method($frontend, 'allow_add', [$course, $cm, $sections[1]], $name));
-        $this->assertFalse(phpunit_util::call_internal_method($frontend, 'allow_add', [$course, null, $sections[0]], $name));
-        $this->assertFalse(phpunit_util::call_internal_method($frontend, 'allow_add', [$course, null, $sections[1]], $name));
+        $this->assertCount(1, \phpunit_util::call_internal_method($frontend, 'get_javascript_init_params', [$course], $name));
+        $this->assertCount(1, \phpunit_util::call_internal_method($frontend, 'get_javascript_init_params', [$course, $cm1], $name));
+        $this->assertFalse(\phpunit_util::call_internal_method($frontend, 'allow_add', [$course], $name));
+        $this->assertFalse(\phpunit_util::call_internal_method($frontend, 'allow_add', [$course, $cm1, null], $name));
+        $this->assertFalse(\phpunit_util::call_internal_method($frontend, 'allow_add', [$course, $cm2, null], $name));
+        $this->assertFalse(\phpunit_util::call_internal_method($frontend, 'allow_add', [$course, $cm1, $sections[1]], $name));
+        $this->assertFalse(\phpunit_util::call_internal_method($frontend, 'allow_add', [$course, $cm2, $sections[1]], $name));
+        $this->assertFalse(\phpunit_util::call_internal_method($frontend, 'allow_add', [$course, null, $sections[0]], $name));
+        $this->assertFalse(\phpunit_util::call_internal_method($frontend, 'allow_add', [$course, null, $sections[1]], $name));
         $course = $generator->create_course(['lang' => 'nl']);
-        $this->assertFalse(phpunit_util::call_internal_method($frontend, 'allow_add', [$course, $cm, $sections[1]], $name));
+        $this->assertFalse(\phpunit_util::call_internal_method($frontend, 'allow_add', [$course, $cm1, $sections[1]], $name));
+        $this->assertFalse(\phpunit_util::call_internal_method($frontend, 'allow_add', [$course, $cm2, $sections[1]], $name));
 
-        $tmpdir = realpath($CFG->phpunit_dataroot);
-        mkdir($tmpdir . '/lang', $CFG->directorypermissions, true);
-        mkdir($tmpdir . '/lang/nl', $CFG->directorypermissions, true);
-        $this->assertCount(1, get_string_manager()->get_list_of_translations(true));
-        $this->assertFalse(phpunit_util::call_internal_method($frontend, 'allow_add', [$course, $cm, $sections[1]], $name));
+        mkdir("$CFG->dataroot/lang/de", 0777, true);
+        mkdir("$CFG->dataroot/lang/nl", 0777, true);
+        // Ensure the new langs are picked up and not taken from the cache.
+        $stringmanager = get_string_manager();
+        $stringmanager->reset_caches(true);
+        $this->assertCount(3, get_string_manager()->get_list_of_translations(true));
+        $this->assertFalse(\phpunit_util::call_internal_method($frontend, 'allow_add', [$course, $cm1, $sections[1]], $name));
+        $this->assertFalse(\phpunit_util::call_internal_method($frontend, 'allow_add', [$course, $cm2, $sections[1]], $name));
     }
 
 
     /**
      * Tests using language condition in back end.
-     * @coversDefaultClass availability_language\condition
+     * @covers \availability_language\condition
      */
     public function test_backend() {
-        global $DB;
+        global $CFG, $DB, $PAGE;
         $this->resetAfterTest();
         $this->setAdminUser();
         set_config('enableavailability', true);
         $generator = $this->getDataGenerator();
         $course = $generator->create_course();
-        $context = context_course::instance($course->id);
+        $context = \context_course::instance($course->id);
         $user = $generator->create_user();
         $generator->enrol_user($user->id, $course->id);
         $pagegen = $generator->get_plugin_generator('mod_page');
@@ -257,12 +271,22 @@ class availability_language_condition_testcase extends advanced_testcase {
         $restriction = \core_availability\tree::get_root_json([condition::get_json('nl')]);
         $pagegen->create_instance(['course' => $course, 'availability' => json_encode($restriction)]);
         rebuild_course_cache($course->id, true);
-        $mpage = new moodle_page();
+        $mpage = new \moodle_page();
         $mpage->set_url('/course/index.php', ['id' => $course->id]);
+        $PAGE->set_url('/course/index.php', ['id' => $course->id]);
         $mpage->set_context($context);
+        $format = course_get_format($course);
         $renderer = $mpage->get_renderer('format_topics');
-        ob_start();
-        echo $renderer->print_multiple_section_page($course, null, null, null, null);
+        $branch = (int)$CFG->branch;
+        if ($branch > 311) {
+            $outputclass = $format->get_output_classname('content');
+            $output = new $outputclass($format);
+            ob_start();
+            echo $renderer->render($output);
+        } else {
+            ob_start();
+            echo $renderer->print_multiple_section_page($course, null, null, null, null);
+        }
         $out = ob_get_clean();
         $this->assertStringContainsString('Not available unless: The student\'s language is English ‎(en)', $out);
         // MDL-68333 hack when nl language is not installed.
@@ -270,7 +294,11 @@ class availability_language_condition_testcase extends advanced_testcase {
         $this->setuser($user);
         rebuild_course_cache($course->id, true);
         ob_start();
-        echo $renderer->print_multiple_section_page($course, null, null, null, null);
+        if ($branch > 311) {
+            echo $renderer->render($output);
+        } else {
+            echo $renderer->print_multiple_section_page($course, null, null, null, null);
+        }
         $out = ob_get_clean();
         $this->assertStringNotContainsString('Not available unless: The student\'s language is English ‎(en)', $out);
     }

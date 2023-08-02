@@ -85,3 +85,32 @@ $string['templatetopic_icons_help'] = 'Esta opción define si se muestran o no l
 $string['hidden_message'] = 'El tema <em>{$a}</em> no está disponible en este momento.';
 $string['privacy:metadata'] = 'El formato Temas en pestañas no almacena datos personales.';
 $string['hiddensectionshelp'] = 'Las secciones ocultas se muestran en forma colapsada con mensaje de disponibilidad';
+
+$string['tabsview'] = 'Vista de pestañas';
+$string['tabsview_help'] = 'Por defecto: es la vista tradicional de pestañas.<br />
+Verticalmente: se muestran las pestañas al lado izquierdo de manera vertical. El contenido queda a la derecha del menú.<br />
+Una sola línea: todas las pestañas son mostradas en una sola línea, con desplazamiento horizontal si es necesario. Es útil sobre todo cuando hay demasiadas pestañas.';
+$string['tabsview_default'] = 'Por defecto';
+$string['tabsview_vertical'] = 'Verticalmente';
+$string['tabsview_oneline'] = 'Una sola línea';
+
+$string['increasesections'] = 'Adicionar una nueva sección después de la sección actual';
+
+$string['hiddentabsbar'] = 'Las pestañas están configuradas para estar ocultas. No se verán cuando no esté en modo de edición.';
+$string['enablecustomstyles'] = 'Habilitar estilos personalizados';
+$string['enablecustomstyles_help'] = 'Habilitar color de fuente, color de fondo y otros estilos personalizados de pestañas en la configuración de la sección.';
+
+$string['usessectionsnavigation'] = 'Usar navegación en secciones';
+$string['usessectionsnavigation_help'] = 'Mostrar un botón para navegar a la sección anterior y a la siguiente.';
+$string['sectionsnavigation_sitelevel'] = 'Usar el valor por defecto del sitio';
+$string['sectionsnavigation_support'] = 'Solamente si el tema no soporta la funcionalidad "Índice de curso"';
+$string['sectionsnavigation_not'] = 'No usar';
+$string['sectionsnavigation_bottom'] = 'Usar en la parte inferior';
+$string['sectionsnavigation_both'] = 'En la parte superior e inferior de la sección';
+$string['sectionsnavigation_slides'] = 'Similar a un pase de diapositivas';
+$string['enableanchorposition'] = 'Habilitar ancla de posición';
+$string['enableanchorposition_help'] = 'Usar una ancla para posicionarse en la parte superior de las pestañas cuando se haga clic en una pestaña.';
+$string['defaultsectionsnavigation'] = 'Valor por defecto para la navegación de secciones';
+$string['defaultsectionsnavigation_help'] = 'Valor por defecto a ser utilizado para definir el comportamiento de la funcionalidad "Usar navegación en secciones". Este valor puede ser sobreescrito por cada curso.';
+$string['usescourseindex'] = 'Usar índice de curso';
+$string['usescourseindex_help'] = 'Usar la barra lateral conocida como <em>Índice de curso</em> que permite la navegación a través de secciones y recursos.';

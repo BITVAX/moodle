@@ -17,21 +17,21 @@
 /**
  * Front-end class.
  *
- * @package availability_language
- * @copyright 2018 Renaat Debleu <info@eWallah.net>
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   availability_language
+ * @copyright 2022 eWallah.net
+ * @author    Renaat Debleu <info@eWallah.net>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace availability_language;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Front-end class.
  *
- * @package availability_language
- * @copyright 2018 Renaat Debleu <info@eWallah.net>
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   availability_language
+ * @copyright 2022 eWallah.net
+ * @author    Renaat Debleu <info@eWallah.net>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class frontend extends \core_availability\frontend {
 
@@ -52,7 +52,7 @@ class frontend extends \core_availability\frontend {
     /**
      * Language condition should be available if
      *     the course language is not forced, or
-     *     the section is not 0, or
+     *     the module language is not forced, or
      *     more than language is installed.
      *
      * @param stdClass $course Course object
@@ -63,10 +63,6 @@ class frontend extends \core_availability\frontend {
     protected function allow_add($course, \cm_info $cm = null, \section_info $section = null) {
         // If forced course language.
         if ($course->lang != '') {
-            return false;
-        }
-        // Section 0.
-        if ($section && $section->section == 0) {
             return false;
         }
         // If there is only one language installed.

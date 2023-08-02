@@ -86,3 +86,91 @@ $string['templatetopic_icons_help'] = 'This option defines if the icons are disp
 $string['hidden_message'] = 'The section <em>{$a}</em> is not currently available.';
 $string['privacy:metadata'] = 'The Onetopic format plugin does not store any personal data.';
 $string['hiddensectionshelp'] = 'Hidden sections are shown in collapsed form with available message';
+
+$string['tabsview'] = 'Tabs view';
+$string['tabsview_help'] = 'By default: is the traditional view.<br />
+Vertically: show tabs in vertical direction. Tabs on the left and content on the right.<br />
+One single line: all tabs are displayed in a single line with horizontal scroll. Useful if too many tabs are used.';
+$string['tabsview_default'] = 'By default';
+$string['tabsview_vertical'] = 'Vertically';
+$string['tabsview_oneline'] = 'Only one line';
+
+$string['increasesections'] = 'Add a section after the currently selected section';
+
+$string['hiddentabsbar'] = 'The tabs are set to be hidden. They will not be seen when not in edit mode.';
+$string['enablecustomstyles'] = 'Enable custom styles';
+$string['enablecustomstyles_help'] = 'Enable font color, background color and other custom tab styles in the sections configuration.';
+
+$string['usessectionsnavigation'] = 'Uses sections navigation';
+$string['usessectionsnavigation_help'] = 'Show buttons for navigate to next or previous section.';
+$string['sectionsnavigation_sitelevel'] = 'Use the default site value';
+$string['sectionsnavigation_support'] = 'Only if theme not support the "uses course index" feature';
+$string['sectionsnavigation_not'] = 'Not use';
+$string['sectionsnavigation_bottom'] = 'Only at the bottom';
+$string['sectionsnavigation_both'] = 'At top and bottom section';
+$string['sectionsnavigation_slides'] = 'Like slides';
+$string['enableanchorposition'] = 'Enable anchor position';
+$string['enableanchorposition_help'] = 'Use an anchor to navigate to the top of tabs when click in a tab.';
+$string['defaultsectionsnavigation'] = 'Default value to sections navigation';
+$string['defaultsectionsnavigation_help'] = 'Default value used in courses to define the "Uses sections navigation" feature. This can be overwrite for each course.';
+$string['usescourseindex'] = 'Uses course index';
+$string['usescourseindex_help'] = 'Use the <em>course index</em> bar to navigate through the sections and resources';
+
+$string['aboutresource'] = 'About the resource';
+$string['courseindex'] = 'Course index';
+$string['courseindex_help'] = 'Enable or disable the <em>course index</em> bar to navigate through the sections and resources.
+This option is only usable if the <em>Course index</em> feature is available in the current Theme.
+This option can be overwrite for each course.';
+$string['usecourseindexsite'] = 'Use the default site value';
+$string['settingsheaderstyles'] = 'Styles';
+$string['tabstyles'] = 'Tab styles';
+$string['tabstyles_help'] = 'Set the styles for the differents tab states.';
+$string['tablabeldefault'] = 'Default tab {$a}';
+$string['tablabelactive'] = 'Active tab';
+$string['tablabelparent'] = 'Parent tab';
+$string['tablabelhighlighted'] = 'Highlighted';
+$string['tablabeldisabled'] = 'Disabled';
+$string['tabstylesetdefault'] = 'Set Default';
+$string['tabstylesetactive'] = 'Set Active';
+$string['tabstylesetparent'] = 'Set Parent';
+$string['tabstylesethighlighted'] = 'Set Highlighted';
+$string['tabstylesetdisabled'] = 'Set Disabled';
+$string['tabstylesethover'] = 'Set Hover';
+$string['tabstylestitle'] = 'Tab styles';
+$string['tabstylesset'] = 'Set styles';
+$string['tabstyleclear'] = 'Clear styles';
+$string['cssbackground'] = 'Background';
+$string['cssfont'] = 'Font';
+$string['csscolor'] = 'Color';
+$string['cssweight'] = 'Weight';
+$string['cssweightbold'] = 'Bold';
+$string['cssweightlighter'] = 'Lighter';
+$string['colorpicker'] = 'Color picker';
+$string['colorpicker_help'] = '';
+$string['csssize'] = 'Size';
+$string['cssstyle'] = 'Style';
+$string['cssnormal'] = 'Normal';
+$string['cssitalic'] = 'Italic';
+$string['cssoblique'] = 'Oblique';
+$string['cssother'] = 'Other styles';
+$string['cssborder'] = 'Border';
+$string['cssnone'] = 'None';
+$string['csssolid'] = 'Solid';
+$string['cssdashed'] = 'Dashed';
+$string['cssdotted'] = 'Dotted';
+$string['cssdouble'] = 'Double';
+$string['cssgroove'] = 'Groove';
+$string['csshidden'] = 'Hidden';
+$string['cssinset'] = 'Inset';
+$string['cssoutset'] = 'Outset';
+$string['cssridge'] = 'Ridge';
+$string['cssradius'] = 'Radius';
+$string['cssunit'] = 'Unit';
+$string['cssunit_px'] = 'px';
+$string['cssunit_em'] = 'em';
+$string['cssunit_percent'] = '%';
+$string['cssunit_in'] = 'in';
+$string['invalidjsonstyles'] = 'Styles configuration is not valid, fails with: {$a}';
+$string['tabstylebuttons_help'] = 'Click on each button to configure the appearance of the tab in each of its possible states.';
+$string['tabstylesetchilds'] = 'Set Childs';
+$string['tabstylesetchildindex'] = 'Set Child index';
