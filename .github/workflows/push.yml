@@ -61,12 +61,9 @@ jobs:
       matrix:
         include:
           - os: ubuntu-22.04
-            php: 7.4
-            extensions:
-            db: mysqli
-          - os: ubuntu-22.04
             php: 8.1
             db: pgsql
+            extensions: xmlrpc
 
     steps:
       - name: Setting up DB mysql
