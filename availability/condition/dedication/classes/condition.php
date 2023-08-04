@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
-require_once($CFG->libdir . '/../blocks/dedication/dedication_lib.php');
+require_once($CFG->libdir . '/../blocks/dedication/classes/lib/manager.php');
 
 /**
  * dedication condition.
@@ -91,9 +91,9 @@ class condition extends \core_availability\condition {
         $ad= explode( $this->dedication,'/');
         $limit=$ad[1];
         $dedication=((float)$ad[0]*60.0*60.0);
-        $dm = new \block_dedication_manager($course, $mintime, $maxtime, $limit);
+        $dm = new \block_dedication\lib\manager($course, $mintime, $maxtime, $limit);
         $dedicationtime = $dm->get_user_dedication($USER, true);
-        
+
         $allow = ($dedicationtime > $dedication);
         if ($not) {
             $allow = !$allow;
@@ -121,21 +121,11 @@ class condition extends \core_availability\condition {
         $ad= explode('/', $this->dedication);
         $limit=((int)$ad[1])*60;
         $dedication=((float)$ad[0])*60.0*60.0;
-        
-        error_log("************ ad:$ad[0]-$ad[1]");
-        
-        error_log("************ course:".print_r($course,true));
-        
-        $dm = new \block_dedication_manager($course, $mintime, $maxtime, $limit);
+        $dm = new \block_dedication\lib\manager($course, $mintime, $maxtime, $limit);
         $dedicationtime = $dm->get_user_dedication($USER, true);
-        
-        error_log("************ This Dedication:$this->dedication");        
-        error_log("************ Dedicationtime:$dedicationtime");
-        error_log("************ Dedication:$dedication");
-        
         $a = new \stdclass();
-        $a->dedication = \block_dedication_utils::format_dedication($dedication);
-        $a->actual = \block_dedication_utils::format_dedication($dedicationtime);
+        $a->dedication = \block_dedication\lib\utils::format_dedication($dedication);
+        $a->actual = \block_dedication\lib\utils::format_dedication($dedicationtime);
 
         if ($not) {
             return get_string('eithernotdescription', 'availability_dedication', $a);
