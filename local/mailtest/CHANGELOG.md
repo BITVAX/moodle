@@ -1,6 +1,59 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [3.1.6] - 2024-07-22
+### Updated
+- Fixed deprecated strings in Moodle 4.4.
+
+## [3.1.5] - 2024-06-28
+### Update
+- Fixed some compatibility issues with PHP 5.6 and 7.0.
+- DNS test exclamation triangles icons now showing up in older versions of Moodle LMS.
+- Improved SPF, DMIK and DMARC detection.
+
+## [3.1.2] - 2024-04-28
+### Updated
+- Fixed incorrect error message for invalid DMARC ruf.
+- Cleaned-up language file.
+
+## [3.1.1] - 2024-04-23
+### Added
+- Github CI Workflows.
+- Github security reporting
+### Updated
+- Bug reporting form.
+- Tested compatible with PHP 5.6 to 8.3.
+- Compatible with Moodle up to v4.4.
+
+## [3.1.0] - 2024-02-22
+### Added
+- Now tests domain for SPF configuration.
+- Now tests Moodle and domain for DKIM configuration.
+- Now tests domain for DMARC configuration.
+- Now tests domain for BIMI configuration.
+- Updated copyright for 2024.
+
+## [3.0.1] - 2023-10-23
+### Updated
+- Now only run the tests that make sense in order to reduce unlikely recommendations.
+- Now displays missing recommendations.
+- Tested compatible with PHP 5.6 to 8.2.
+
+## [3.0.0] - 2023-10-20
+### Added
+- New diagnostic feature provides issue-specific information and some common solutions.
+- New detection of SMTP credential issue.
+- New detection of SMTP server connection failure/timeout.
+- New detection of SMTP server rejection.
+- New detection of connection timeout issues.
+- New detection of DNS resolution failure.
+- New detection of missing port or SSL/TLS protocol/port mismatch.
+- New detection of closed port.
+- New in-app information to help you troubleshoot if you don't receive the test email.
+### Updated
+- Documentation. Links to http:// have been replaced with https://.
+- Compatible with Moodle up to v4.3.
+
 ## [2.0.2] - 2022-05-06
 ### Updated
 - Fix-31: Corrected deprecated FILTER_SANITIZE_STRING deprecation notice in PHP 8.1.

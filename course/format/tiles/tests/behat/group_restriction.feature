@@ -43,7 +43,7 @@ Feature: Teacher can restrict course modules to groups
     And I wait "1" seconds
 
     And I am on "Course 1" course homepage with editing mode on
-    And I add a "Page" to section "1"
+    And I add a "page" activity to course "Course 1" section "1"
     And I set the following fields to these values:
       | Name         | Restricted page |
       | Description  | Test   |
@@ -60,8 +60,9 @@ Feature: Teacher can restrict course modules to groups
     And I press "Save and return to course"
 
     And I wait until the page is ready
-    And I follow "Collapse all"
-    And I expand section "1" for edit
+    #  We used to say "And I follow "Collapse all"" but course index includes that too we have to use element ID now.
+    And I follow "collapsesections"
+    And I toggle expand or collapse section "1" for edit
 
     And I open "I am a restricted label" actions menu
     And I click on "Edit settings" "link" in the "I am a restricted label" activity

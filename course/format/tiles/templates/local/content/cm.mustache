@@ -53,12 +53,31 @@
                 }
             ]
         },
-        "modstealth": true
+        "modstealth": true,
+        "indent": 1
     }
 }}
+{{#editing}}
+    {{^ismoodle41minus}}{{^ismoodle44}}
+        <div class="divider divider-plus bulk-hidden" data-action="insert-before-{{activityname}}">
+            {{> core_course/activitychooserbuttonactivity}}
+        </div>
+        {{/ismoodle44}}{{/ismoodle41minus}}
+    {{#ismoodle44}}
+        {{< core_courseformat/local/content/divider}}
+            {{$content}}{{> core_course/activitychooserbuttonactivity}}{{/content}}
+        {{/ core_courseformat/local/content/divider}}
+    {{/ismoodle44}}
+{{/editing}}
 <div class="activity-item {{#modstealth}}hiddenactivity{{/modstealth}}{{!
         }}{{#modhiddenfromstudents}}hiddenactivity{{/modhiddenfromstudents}}{{!
         }}{{#modinline}}activityinline{{/modinline}}" data-activityname="{{activityname}}">
+    {{^ismoodle41minus}}
+        {{$ core_courseformat/local/content/cm/bulkselect }}
+            {{> core_courseformat/local/content/cm/bulkselect }}
+        {{/ core_courseformat/local/content/cm/bulkselect }}
+    {{/ismoodle41minus}}
+
     {{!
       Place the actual content of the activity-item in a separate template to make it easier for other formats to add
       additional content to the activity wrapper.

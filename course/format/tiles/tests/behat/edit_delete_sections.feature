@@ -1,4 +1,4 @@
-@format @format_tiles @edit_delete_sections @javascript
+@format @format_tiles @format_tiles_edit_delete_sections @javascript
 Feature: Sections can be edited and deleted in tiles format
   In order to rearrange my course contents
   As a teacher
@@ -39,20 +39,18 @@ Feature: Sections can be edited and deleted in tiles format
   Scenario: View the default name of the second section in tiles format
     And I edit the section "2"
     And I wait until the page is ready
-    Then the field "Custom" matches value "0"
-    And the field "New value for Section name" matches value "Tile 2"
+    Then the field "Section name" matches value ""
 
   Scenario: Edit section default name in tiles format
     And I edit the section "2" and I fill the form with:
-      | Custom                     | 1                       |
-      | New value for Section name | This is the second Tile |
+      | Section name | This is the second Tile |
     Then I should see "This is the second Tile" in the "li#section-2" "css_element"
     And I should not see "Tile 2" in the "li#section-2" "css_element"
 
   @javascript
   Scenario: Inline edit section name in tiles format
     When I click on "Edit tile name" "link" in the "li#section-1" "css_element"
-    And I set the field "New name for topic Tile 1" to "Setting up in business"
+    And I set the field "New name for section Tile 1" to "Setting up in business"
     And I press the enter key
     Then I should not see "Tile 1" in the "region-main" "region"
     And I should see "Setting up in business" in the "li#section-1" "css_element"
@@ -63,7 +61,7 @@ Feature: Sections can be edited and deleted in tiles format
   Scenario: Deleting the last section in tiles format
     And I wait "1" seconds
     And I delete section "5"
-    Then I should see "Are you absolutely sure you want to completely delete \"Tile 5\" and all the activities it contains?"
+    Then I should see section confirm delete message for "Tile 5"
     And I click on "Delete" "button" in the ".modal" "css_element"
     And I should not see "Tile 5"
     And I should see "Tile 4"

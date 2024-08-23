@@ -43,14 +43,16 @@ class controller_test extends sharing_chart_testcase {
         // Set session key and set current user
         $this->set_session_key($user);
 
+        rebuild_course_cache($course->id);
+
         // Test if sharing cart is empty for current user
         $entities = $this->get_sharing_cart_entities(['userid' => $user->id]);
         $this->assertCount(0, $entities);
 
         $controller = new controller();
-        $controller->backup($assignment->cmid, false, $course->id);
-        $controller->backup($label->cmid, false, $course->id);
-        $controller->backup($forum->cmid, false, $course->id);
+        $controller->backup($assignment->cmid, false, $course->id, false);
+        $controller->backup($label->cmid, false, $course->id, false);
+        $controller->backup($forum->cmid, false, $course->id, false);
 
         // Test if sharing cart have 3 copied activities for current user
         $entities = $this->get_sharing_cart_entities(['userid' => $user->id]);
@@ -89,7 +91,7 @@ class controller_test extends sharing_chart_testcase {
         $assignment4 = $this->create_assignment($course, 2);
 
         $section1 = $this->get_course_section($course, 1);
-        $section2 = $this->get_course_section($course, 1);
+        $section2 = $this->get_course_section($course, 2);
 
         // Enrolling user that capable to do backup and restore
         $this->enrol_users($course, [$user]);
@@ -97,13 +99,15 @@ class controller_test extends sharing_chart_testcase {
         // Set session key and set current user
         $this->set_session_key($user);
 
+        rebuild_course_cache($course->id);
+
         // Test if sharing cart is empty for current user
         $entities = $this->get_sharing_cart_entities(['userid' => $user->id]);
         $this->assertCount(0, $entities);
 
         $controller = new controller();
-        $controller->backup_section($section1->id, $section1->name, false, $course->id);
-        $controller->backup_section($section2->id, $section2->name, false, $course->id);
+        $controller->backup_section($section1->id, $section1->name, false, $course->id, false);
+        $controller->backup_section($section2->id, $section2->name, false, $course->id, false);
 
         // Test if sharing cart have 4 copied activities for current user
         $entities = $this->get_sharing_cart_entities(['userid' => $user->id]);
@@ -149,13 +153,17 @@ class controller_test extends sharing_chart_testcase {
         // Set session key and set current user
         $this->set_session_key($user);
 
+        rebuild_course_cache($course->id);
+
         // Test if sharing cart is empty for current user
         $entities = $this->get_sharing_cart_entities(['userid' => $user->id]);
         $this->assertCount(0, $entities);
 
         $controller = new controller();
-        $controller->backup_section($section1->id, $section1->name, false, $course->id);
-        $controller->backup_section($section2->id, $section2->name, false, $course->id);
+        $controller->backup_section($section1->id, $section1->name, false, $course->id, false);
+        $controller->backup_section($section2->id, $section2->name, false, $course->id, false);
+
+        $this->enable_assign();
 
         // Test if sharing cart have 2 copied urls for current user
         $entities = $this->get_sharing_cart_entities(['userid' => $user->id]);
@@ -192,14 +200,16 @@ class controller_test extends sharing_chart_testcase {
         // Set session key and set current user
         $this->set_session_key($user);
 
+        rebuild_course_cache($course->id);
+
         // Test if sharing cart is empty for current user
         $entities = $this->get_sharing_cart_entities(['userid' => $user->id]);
         $this->assertCount(0, $entities);
 
         $controller = new controller();
-        $controller->backup_section($section2->id, $section2->name, false, $course->id);
-        $controller->backup($assignment1->cmid, false, $course->id);
-        $controller->backup($assignment2->cmid, false, $course->id);
+        $controller->backup_section($section2->id, $section2->name, false, $course->id, false);
+        $controller->backup($assignment1->cmid, false, $course->id, false);
+        $controller->backup($assignment2->cmid, false, $course->id, false);
 
         // Test if sharing cart have 3 copied activities for current user
         $entities = $this->get_sharing_cart_entities(['userid' => $user->id]);
@@ -216,22 +226,25 @@ class controller_test extends sharing_chart_testcase {
         $section2 = $this->get_course_section($course, 2);
         $section3 = $this->get_course_section($course, 3);
 
-        $assignment = $this->create_assignment($course, 1);
-        $label = $this->create_module('label', $course, 2);
-        $forum = $this->create_module('forum', $course, 3);
+        $assignment = $this->create_assignment($course, $section1->section);
+        $label = $this->create_module('label', $course, $section2->section);
+        $forum = $this->create_module('forum', $course, $section3->section);
 
         $this->enrol_users($course, [$user]);
         $this->set_session_key($user);
 
         $controller = new controller();
-        $controller->backup($assignment->cmid, false, $course->id);
-        $controller->backup($forum->cmid, false, $course->id);
-        $controller->backup($label->cmid, false, $course->id);
-        $controller->backup_section($section1->id, $section1->name, false, $course->id);
-        $controller->backup_section($section2->id, $section2->name, false, $course->id);
-        $controller->backup_section($section3->id, $section3->name, false, $course->id);
+        $controller->backup($assignment->cmid, false, $course->id, false);
+        $controller->backup($forum->cmid, false, $course->id, false);
+        $controller->backup($label->cmid, false, $course->id, false);
+        $controller->backup_section($section1->id, $section1->name, false, $course->id, false);
+        $controller->backup_section($section2->id, $section2->name, false, $course->id, false);
+        $controller->backup_section($section3->id, $section3->name, false, $course->id, false);
+
+        rebuild_course_cache($course->id);
 
         $entities = $this->get_sharing_cart_entities(['userid' => $user->id]);
+
         $this->assertCount(6, $entities);
 
         $new_course = $this->create_course();
@@ -302,11 +315,11 @@ class controller_test extends sharing_chart_testcase {
 
         // Copy modules to the sharing cart
         $controller = new controller();
-        $controller->backup($forum->cmid, false, $course->id);
-        $controller->backup($assignment->cmid, false, $course->id);
-        $controller->backup($label->cmid, false, $course->id);
-        $controller->backup_section($section1->id, $section1->name, false, $course->id);
-        $controller->backup_section($section2->id, $section2->name, false, $course->id);
+        $controller->backup($forum->cmid, false, $course->id, false);
+        $controller->backup($assignment->cmid, false, $course->id, false);
+        $controller->backup($label->cmid, false, $course->id, false);
+        $controller->backup_section($section1->id, $section1->name, false, $course->id, false);
+        $controller->backup_section($section2->id, $section2->name, false, $course->id, false);
 
         $sharing_cart_assignment = $this->get_sharing_cart_by_module('assign');
         $sharing_cart_forum = $this->get_sharing_cart_by_module('forum');
@@ -372,9 +385,9 @@ class controller_test extends sharing_chart_testcase {
         $this->set_session_key($user);
 
         $controller = new controller();
-        $controller->backup($assignment->cmid, false, $course->id);
-        $controller->backup($label->cmid, false, $course->id);
-        $controller->backup_section($section1->id, $section1->name, false, $course->id);
+        $controller->backup($assignment->cmid, false, $course->id, false);
+        $controller->backup($label->cmid, false, $course->id, false);
+        $controller->backup_section($section1->id, $section1->name, false, $course->id, false);
 
         $entities = $this->get_sharing_cart_entities(['userid' => $user->id]);
 

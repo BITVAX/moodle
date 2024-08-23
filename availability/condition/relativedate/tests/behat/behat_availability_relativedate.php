@@ -37,7 +37,6 @@ require_once(__DIR__ . '/../../../../../lib/behat/behat_base.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class behat_availability_relativedate extends behat_base {
-
     /**
      * See a relative date
      * @Then /^I should see relativedate "([^"]*)"$/
@@ -73,7 +72,7 @@ class behat_availability_relativedate extends behat_base {
 
     /**
      * Make one activity available after another
-     * @Given /^I make "(?P<activity2>[^"]*)" relative date depending on "(?P<avtivity1>[^"]*)"$/
+     * @Given /^I make "(?P<activity2>[^"]*)" relative date depending on "(?P<activity1>[^"]*)"$/
      * @param string $activity1
      * @param string $activity2
      */
@@ -85,8 +84,10 @@ class behat_availability_relativedate extends behat_base {
             $str = '{"op":"|","c":[{"type":"relativedate","n":1,"d":1,"s":7,"m":' . $cm1->id . '}],"show":true}';
             $DB->set_field('course_modules', 'availability', $str, ['id' => $cm2->id]);
         }
+        $this->execute('behat_general::i_run_all_adhoc_tasks');
+        core_courseformat\base::reset_course_cache(0);
+        get_fast_modinfo(0, 0, true);
     }
-
 
     /**
      * Configure self enrolment
@@ -96,7 +97,7 @@ class behat_availability_relativedate extends behat_base {
      */
     private function config_self_enrolment($course, $start, $end) {
         global $CFG, $DB;
-        require_once($CFG->dirroot.'/enrol/self/lib.php');
+        require_once($CFG->dirroot . '/enrol/self/lib.php');
         $courseid = $this->get_course_id($course);
         $selfplugin = enrol_get_plugin('self');
         $instance = $DB->get_record('enrol', ['courseid' => $courseid, 'enrol' => 'self'], '*', MUST_EXIST);
@@ -115,7 +116,10 @@ class behat_availability_relativedate extends behat_base {
      */
     protected function get_transformed_timestamp($time) {
         if ($time === '') {
-             return 0;
+            return 0;
+        }
+        if (intval($time) > 0) {
+            return $time;
         }
         $timepassed = array_filter(explode('##', $time));
         $first = reset($timepassed);
