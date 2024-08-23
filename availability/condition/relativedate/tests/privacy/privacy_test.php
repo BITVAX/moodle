@@ -25,8 +25,8 @@
 
 namespace availability_relativedate\privacy;
 
-use \core_privacy\tests\provider_testcase;
-use \core_privacy\local\metadata\collection;
+use core_privacy\tests\provider_testcase;
+use core_privacy\local\metadata\collection;
 
 /**
  * Privacy tests for relative date availability.
@@ -37,13 +37,12 @@ use \core_privacy\local\metadata\collection;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \availability_relativedate\privacy\provider
  */
-class privacy_test extends provider_testcase {
-
+final class privacy_test extends provider_testcase {
     /**
      * Test returning metadata.
      * @covers \availability_relativedate\privacy\provider
      */
-    public function test_get_metadata() {
+    public function test_get_metadata(): void {
         $collection = new collection('availability_relativedate');
         $reason = provider::get_reason($collection);
         $this->assertEquals($reason, 'privacy:metadata');

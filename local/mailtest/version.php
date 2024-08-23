@@ -1,5 +1,5 @@
 <?php
-// This file is part of the eMailTest plugin for Moodle - http://moodle.org/
+// This file is part of the eMailTest plugin for Moodle - https://moodle.org/
 //
 // eMailTest is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,22 +12,22 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Version information for eMailTest (also called MailTest).
  *
  * @package    local_mailtest
- * @copyright  2015-2023 TNG Consulting Inc. - www.tngconsulting.ca
+ * @copyright  2015-2024 TNG Consulting Inc. - www.tngconsulting.ca
  * @author     Michael Milette
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_mailtest';  // To check on upgrade, that module sits in correct place.
-$plugin->version   = 2023050600;        // The current module version (Date: YYYYMMDDXX).
+$plugin->version   = 2024072200;        // The current module version (Date: YYYYMMDDXX).
 $plugin->requires  = 2013040500;        // Requires Moodle version 2.5.
-$plugin->release   = '2.0.2';
+$plugin->release   = '3.1.6';
 $plugin->maturity  = MATURITY_STABLE;
 $plugin->cron      = 0;

@@ -24,7 +24,7 @@
 
 /**
  * Remove sharing cart entity, when related file was removed from the system
- * @param $file
+ * @param object $file file record
  * @throws dml_exception
  */
 function block_sharing_cart_after_file_deleted($file) {

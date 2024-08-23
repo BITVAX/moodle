@@ -34,13 +34,12 @@ namespace availability_relativedate;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \availability_relativedate\frontend
  */
-class frontend_test extends \advanced_testcase {
-
+final class frontend_test extends \advanced_testcase {
     /**
      * Tests using relativedate condition in front end.
      * @covers \availability_relativedate\frontend
      */
-    public function test_frontend() {
+    public function test_frontend(): void {
         global $DB;
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -51,6 +50,7 @@ class frontend_test extends \advanced_testcase {
         $dg = $this->getDataGenerator();
         $course = $dg->create_course(['enablecompletion' => 1, 'enddate' => time() + 999999]);
         $dg->get_plugin_generator('mod_page')->create_instance(['course' => $course]);
+        $dg->create_module('assign', ['course' => $course->id], ['completion' => 1]);
         $modinfo = get_fast_modinfo($course);
         $sections = $modinfo->get_section_info_all();
         $selfplugin = enrol_get_plugin('self');
@@ -62,6 +62,16 @@ class frontend_test extends \advanced_testcase {
         $name = '\availability_relativedate\frontend';
         $frontend = new frontend();
         $this->assertCount(5, \phpunit_util::call_internal_method($frontend, 'get_javascript_init_params', [$course], $name));
+        foreach ($modinfo->get_instances() as $cms) {
+            foreach ($cms as $cm) {
+                $this->assertCount(5, \phpunit_util::call_internal_method(
+                    $frontend,
+                    'get_javascript_init_params',
+                    [$course, $cm],
+                    $name
+                ));
+            }
+        }
         $this->assertTrue(\phpunit_util::call_internal_method($frontend, 'allow_add', [$course, null, $sections[0]], $name));
         $this->assertTrue(\phpunit_util::call_internal_method($frontend, 'allow_add', [$course, null, $sections[1]], $name));
         $this->assertTrue(\phpunit_util::call_internal_method($frontend, 'allow_add', [$course], $name));
@@ -71,7 +81,7 @@ class frontend_test extends \advanced_testcase {
      * Test behat funcs
      * @covers \behat_availability_relativedate
      */
-    public function test_behat() {
+    public function test_behat(): void {
         global $CFG;
         require_once($CFG->dirroot . '/availability/condition/relativedate/tests/behat/behat_availability_relativedate.php');
         $this->resetAfterTest();
@@ -86,8 +96,8 @@ class frontend_test extends \advanced_testcase {
         $class->selfenrolment_exists_in_course_starting($course->fullname, '##-10 days noon##');
         $class->selfenrolment_exists_in_course_ending($course->fullname, '');
         $class->selfenrolment_exists_in_course_ending($course->fullname, '## today ##');
-        $class->i_make_activity_relative_date_depending_on('page1', 'page2');
         $this->expectExceptionMessage('behat_context_helper');
         $class->i_should_see_relativedate('##-10 days noon##');
+        $class->i_make_activity_relative_date_depending_on('page1', 'page2');
     }
 }

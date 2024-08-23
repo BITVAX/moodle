@@ -55,7 +55,15 @@ class controlmenu extends controlmenu_base {
         $format = $this->format;
         $section = $this->section;
         $course = $format->get_course();
-        $sectionreturn = $format->get_section_number();
+        $sectionreturn = $format->get_sectionnum();
+        $parentcontrols = parent::section_control_items();
+
+        if ($section->section === 0) {
+            return $parentcontrols;
+        }
+
+        // Unset the view item that points to /course/section.php.
+        unset($parentcontrols['view']);
 
         $coursecontext = context_course::instance($course->id);
 
@@ -67,6 +75,20 @@ class controlmenu extends controlmenu_base {
         $url->param('sesskey', sesskey());
 
         $controls = [];
+        $controls['setphoto'] = [
+            'url'   => new \moodle_url(
+                '/course/format/tiles/editor/editimage.php',
+                ['sectionid' => $section->id]
+            ),
+            'icon' => 'i/messagecontentimage',
+            'name' => get_string('setbackgroundphoto', 'format_tiles'),
+            'pixattr' => ['class' => ''],
+            'attr' => [
+                'class' => 'editing_update', 'data-tiles-action' => 'launch-tiles-icon-picker',
+                'data-section' => $section->section,
+                'data-true-sectionid' => $section->id,
+            ],
+        ];
         if ($section->section && has_capability('moodle/course:setcurrentsection', $coursecontext)) {
             if ($course->marker == $section->section) {  // Show the "light globe" on/off.
                 $url->param('marker', 0);
@@ -76,10 +98,7 @@ class controlmenu extends controlmenu_base {
                     'icon' => 'i/marked',
                     'name' => $highlightoff,
                     'pixattr' => ['class' => ''],
-                    'attr' => [
-                        'class' => 'editing_highlight',
-                        'data-action' => 'removemarker'
-                    ],
+                    'attr' => ['class' => 'editing_highlight', 'data-action' => 'removemarker'],
                 ];
             } else {
                 $url->param('marker', $section->section);
@@ -89,15 +108,10 @@ class controlmenu extends controlmenu_base {
                     'icon' => 'i/marker',
                     'name' => $highlight,
                     'pixattr' => ['class' => ''],
-                    'attr' => [
-                        'class' => 'editing_highlight',
-                        'data-action' => 'setmarker'
-                    ],
+                    'attr' => ['class' => 'editing_highlight', 'data-action' => 'setmarker'],
                 ];
             }
         }
-
-        $parentcontrols = parent::section_control_items();
 
         // If the edit key exists, we are going to insert our controls after it.
         if (array_key_exists("edit", $parentcontrols)) {

@@ -24,8 +24,7 @@
  */
 namespace availability_language;
 
-use \core_availability\mock_info;
-use \core_availability\tree;
+use core_availability\{mock_info, tree};
 use availability_language\condition;
 use moodle_exception;
 
@@ -38,12 +37,11 @@ use moodle_exception;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \availability_language
  */
-class condition_test extends \advanced_testcase {
-
+final class condition_test extends \advanced_testcase {
     /**
      * Load required classes.
      */
-    public function setUp():void {
+    public function setUp(): void {
         // Load the mock info class so that it can be used.
         global $CFG;
         require_once($CFG->dirroot . '/availability/tests/fixtures/mock_info.php');
@@ -53,18 +51,22 @@ class condition_test extends \advanced_testcase {
      * Tests constructing and using language condition as part of tree.
      * @covers \availability_language\condition
      */
-    public function test_in_tree() {
-        global $DB;
+    public function test_in_tree(): void {
         $this->resetAfterTest();
-
+        $controller = new \tool_langimport\controller();
+        try {
+            $controller->install_languagepacks('nl');
+        } catch (\Exception $e) {
+            // We cannot be 100% sure the language can be downloaded.
+            $this->markTestSkipped($e->getMessage());
+            return;
+        }
         // Create course with language turned on and a Page.
         set_config('enableavailability', true);
         $generator = $this->getDataGenerator();
         $course = $generator->create_course();
-        $user1 = $generator->create_user()->id;
-        // MDL-68333 hack when nl language is not installed.
-        $DB->set_field('user', 'lang', 'nl', ['id' => $user1]);
-        $user2 = $generator->create_user()->id;
+        $user1 = $generator->create_user(['lang' => 'nl'])->id;
+        $user2 = $generator->create_user(['lang' => 'en'])->id;
 
         $info1 = new mock_info($course, $user1);
         $info2 = new mock_info($course, $user2);
@@ -87,10 +89,10 @@ class condition_test extends \advanced_testcase {
         $this->assertFalse($tree2->check_available(false, $info2, true, $user2)->is_available());
         // Change user.
         $this->setuser($user1);
-        $this->assertTrue($tree1->check_available(false, $info1, true, $user1)->is_available());
-        $this->assertFalse($tree2->check_available(false, $info1, true, $user1)->is_available());
-        $this->assertFalse($tree1->check_available(true, $info1, true, $user1)->is_available());
-        $this->assertTrue($tree2->check_available(true, $info1, true, $user1)->is_available());
+        $this->assertFalse($tree1->check_available(false, $info1, true, $user1)->is_available());
+        $this->assertTrue($tree2->check_available(false, $info1, true, $user1)->is_available());
+        $this->assertTrue($tree1->check_available(true, $info1, true, $user1)->is_available());
+        $this->assertFalse($tree2->check_available(true, $info1, true, $user1)->is_available());
         $this->setuser($user2);
         $this->assertTrue($tree1->check_available(false, $info2, true, $user2)->is_available());
         $this->assertFalse($tree2->check_available(false, $info2, true, $user2)->is_available());
@@ -102,19 +104,17 @@ class condition_test extends \advanced_testcase {
      * Tests section availability.
      * @covers \availability_language\condition
      */
-    public function test_sections() {
+    public function test_sections(): void {
         global $DB;
         $this->resetAfterTest();
         set_config('enableavailability', true);
         // Create course with language turned on and a Page.
         $generator = $this->getDataGenerator();
         $course = $generator->create_course();
-        $user1 = $generator->create_user()->id;
+        $user1 = $generator->create_and_enrol($course)->id;
         // MDL-68333 hack when nl language is not installed.
         $DB->set_field('user', 'lang', 'nl', ['id' => $user1]);
-        $user2 = $generator->create_user()->id;
-        $generator->enrol_user($user1, $course->id);
-        $generator->enrol_user($user2, $course->id);
+        $user2 = $generator->create_and_enrol($course)->id;
         $cond = '{"op":"|","show":false,"c":[{"type":"language","id":"nl"}]}';
         $DB->set_field('course_sections', 'availability', $cond, ['course' => $course->id, 'section' => 0]);
         $cond = '{"op":"|","show":true,"c":[{"type":"language","id":""}]}';
@@ -139,7 +139,7 @@ class condition_test extends \advanced_testcase {
      * Tests the constructor including error conditions.
      * @covers \availability_language\condition
      */
-    public function test_constructor() {
+    public function test_constructor(): void {
         // This works with no parameters.
         $structure = (object)[];
         $language = new condition($structure);
@@ -171,7 +171,7 @@ class condition_test extends \advanced_testcase {
      * Tests the save() function.
      * @covers \availability_language\condition
      */
-    public function test_save() {
+    public function test_save(): void {
         $structure = (object)['id' => 'fr'];
         $cond = new condition($structure);
         $structure->type = 'language';
@@ -183,7 +183,7 @@ class condition_test extends \advanced_testcase {
      * Tests the get_description and get_standalone_description functions.
      * @covers \availability_language\condition
      */
-    public function test_get_description() {
+    public function test_get_description(): void {
         $info = new mock_info();
         $language = new condition((object)['type' => 'language', 'id' => '']);
         $this->assertEquals($language->get_description(false, false, $info), '');
@@ -202,9 +202,9 @@ class condition_test extends \advanced_testcase {
      * Tests using language condition in front end.
      * @covers \availability_language\frontend
      */
-    public function test_frontend() {
+    public function test_frontend(): void {
         global $CFG;
-        require_once($CFG->dirroot.'/mod/lesson/locallib.php');
+        require_once($CFG->dirroot . '/mod/lesson/locallib.php');
         $this->resetAfterTest();
         $this->setAdminUser();
         set_config('enableavailability', true);
@@ -214,12 +214,10 @@ class condition_test extends \advanced_testcase {
         $les = new \lesson($generator->get_plugin_generator('mod_lesson')->create_instance($params));
         $params['lang'] = 'nl';
         $page = $generator->get_plugin_generator('mod_page')->create_instance($params);
-        $user = $generator->create_user();
         $modinfo = get_fast_modinfo($course);
         $cm1 = $modinfo->get_cm($les->cmid);
         $cm2 = $modinfo->get_cm($page->cmid);
         $sections = $modinfo->get_section_info_all();
-        $generator->enrol_user($user->id, $course->id);
 
         $name = 'availability_language\frontend';
         $frontend = new \availability_language\frontend();
@@ -253,16 +251,15 @@ class condition_test extends \advanced_testcase {
      * Tests using language condition in back end.
      * @covers \availability_language\condition
      */
-    public function test_backend() {
-        global $CFG, $DB, $PAGE;
+    public function test_backend(): void {
+        global $DB, $PAGE;
         $this->resetAfterTest();
         $this->setAdminUser();
         set_config('enableavailability', true);
         $generator = $this->getDataGenerator();
         $course = $generator->create_course();
         $context = \context_course::instance($course->id);
-        $user = $generator->create_user();
-        $generator->enrol_user($user->id, $course->id);
+        $user = $generator->create_and_enrol($course);
         $pagegen = $generator->get_plugin_generator('mod_page');
         $restriction = \core_availability\tree::get_root_json([condition::get_json('fr')]);
         $pagegen->create_instance(['course' => $course, 'availability' => json_encode($restriction)]);
@@ -277,16 +274,10 @@ class condition_test extends \advanced_testcase {
         $mpage->set_context($context);
         $format = course_get_format($course);
         $renderer = $mpage->get_renderer('format_topics');
-        $branch = (int)$CFG->branch;
-        if ($branch > 311) {
-            $outputclass = $format->get_output_classname('content');
-            $output = new $outputclass($format);
-            ob_start();
-            echo $renderer->render($output);
-        } else {
-            ob_start();
-            echo $renderer->print_multiple_section_page($course, null, null, null, null);
-        }
+        $outputclass = $format->get_output_classname('content');
+        $output = new $outputclass($format);
+        ob_start();
+        echo $renderer->render($output);
         $out = ob_get_clean();
         $this->assertStringContainsString('Not available unless: The student\'s language is English ‎(en)', $out);
         // MDL-68333 hack when nl language is not installed.
@@ -294,11 +285,7 @@ class condition_test extends \advanced_testcase {
         $this->setuser($user);
         rebuild_course_cache($course->id, true);
         ob_start();
-        if ($branch > 311) {
-            echo $renderer->render($output);
-        } else {
-            echo $renderer->print_multiple_section_page($course, null, null, null, null);
-        }
+        echo $renderer->render($output);
         $out = ob_get_clean();
         $this->assertStringNotContainsString('Not available unless: The student\'s language is English ‎(en)', $out);
     }
