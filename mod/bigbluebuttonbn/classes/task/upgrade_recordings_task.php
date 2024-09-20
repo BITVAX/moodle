@@ -85,9 +85,8 @@ class upgrade_recordings_task extends adhoc_task {
         $recordingcount = 0;
         foreach ($recordings as $recordingid => $recording) {
             $importeddata = $isimported ? '' : json_encode($recording);
-            $data=instance::parse_meetingid($recording['meetingID']);
             try {
-                $instance = instance::get_from_instanceid($data['instanceid']);
+                $instance = instance::get_from_meetingid($recording['meetingID']);
             } catch (Exception $e) {
                 mtrace("Unable to parse meetingID " . $e->getMessage());
                 continue;
